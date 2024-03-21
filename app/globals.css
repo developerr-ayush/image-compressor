@@ -1,0 +1,54 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+:root {
+  --foreground-rgb: 0, 0, 0;
+  --background-start-rgb: 214, 219, 220;
+  --background-end-rgb: 255, 255, 255;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 255, 255, 255;
+    --background-start-rgb: 0, 0, 0;
+    --background-end-rgb: 0, 0, 0;
+  }
+}
+
+body {
+  color: rgb(var(--foreground-rgb));
+  background: linear-gradient(
+      to bottom,
+      transparent,
+      rgb(var(--background-end-rgb))
+    )
+    rgb(var(--background-start-rgb));
+}
+
+@layer utilities {
+  .text-balance {
+    text-wrap: balance;
+  }
+}
+.gradient-chess {
+  opacity: 0.8;
+  background-image: repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.24) 25%,
+      transparent 25%,
+      transparent 75%,
+      rgba(255, 255, 255, 0.24) 75%,
+      rgba(255, 255, 255, 0.24)
+    ),
+    repeating-linear-gradient(
+      45deg,
+      rgba(255, 255, 255, 0.24) 25%,
+      rgba(176, 176, 176, 0.24) 25%,
+      rgba(177, 177, 177, 0.24) 75%,
+      rgba(255, 255, 255, 0.24) 75%,
+      rgba(255, 255, 255, 0.24)
+    );
+  background-position: 0 0, 10px 10px;
+  background-size: 20px 20px;
+}
