@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const byte = await file.arrayBuffer();
   const buffer = Buffer.from(byte);
   let quality = 50;
-  const path = "_ayush_" + file.name;
+  const path = "compressed_" + file.name;
   console.log(path, data);
   const format = file.type.split("/")[1];
   let compressedImage;
@@ -53,7 +53,7 @@ export async function POST(req: NextRequest) {
   try {
     const params = {
       Bucket: process.env.AWS_BUCKET_NAME || "ayva-hub", // Replace with your bucket name
-      Key: "compress/" + folderName + path,
+      Key: "compress/" + path,
       Body: compressedImage,
     };
     const uploadResult = await s3Client.send(new PutObjectCommand(params));

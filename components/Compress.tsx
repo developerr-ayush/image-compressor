@@ -102,7 +102,7 @@ export const Compress = () => {
                         compressedImages.map((file, index) => (
                             <div key={index} className='relative gradient-chess h-[100px]'>
                                 <Image src={file.url} alt={`Preview ${file.url}`} width={300} height={300} className='object-cover h-[100px]' />
-                                <a href={file.url} download className='absolute bottom-0 right-0 bg-green-600 px-2 py-1 inline-block'>Download Image</a>
+                                <a href={file.url} download={file.url.split("_ayush_")[1]} className='absolute bottom-0 right-0 bg-green-600 px-2 py-1 inline-block'>Download Image</a>
                             </div>
                         ))
 
