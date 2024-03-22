@@ -56,21 +56,26 @@ export const Compress = () => {
     };
     const compressImages = () => {
         let folderName = Date.now().toString();
-        const promises = images.map(async (image) => {
-            const formData = new FormData();
-            formData.append('image', image);
-            formData.append("folderName", folderName);
-            const res = await fetch('/api/compress', {
-                method: 'POST',
-                body: formData,
-                cache: 'no-cache',
+        try {
+            const promises = images.map(async (image) => {
+                const formData = new FormData();
+                formData.append('image', image);
+                formData.append("folderName", folderName);
+                const res = await fetch('/api/compress', {
+                    method: 'POST',
+                    body: formData,
+                    cache: 'no-cache',
+                })
+                return res.json();
             })
-            return res.json();
-        })
-        Promise.all(promises).then((compressedImages) => {
-            setCompressedImages(compressedImages);
-            images.length = 0;
-        })
+            Promise.all(promises).then((compressedImages) => {
+                setCompressedImages(compressedImages);
+                images.length = 0;
+            })
+        } catch (error) {
+            console.log(error)
+            return error
+        }
 
     }
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
