@@ -3,12 +3,14 @@ import { S3Client, PutObjectCommand } from "@aws-sdk/client-s3";
 import sharp from "sharp";
 import { join } from "path";
 const credentials = {
-  region: process.env.AWS_REGION,
-  accessKeyId: process.env.AWS_ACCESS_KEY_ID,
-  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
+  accessKeyId: process.env.AWS_ACCESS_KEY_ID || "",
+  secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY || "",
 };
 
-const client = new S3Client(credentials);
+const client = new S3Client({
+  region: process.env.AWS_REGION || "ap-south-1",
+  credentials: credentials,
+});
 export async function POST(req: NextRequest) {
   const data = await req.formData();
   const file: File | null = data.get("image") as unknown as File;
@@ -59,7 +61,7 @@ export async function POST(req: NextRequest) {
     console.log(compressedImage);
     const uploadResult = await client.send(new PutObjectCommand(params));
     console.log(uploadResult);
-    const updatedPathString = `https://${params.Bucket}.s3.${credentials.region}.amazonaws.com/${params.Key}`;
+    const updatedPathString = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
     console.log(uploadResult);
     console.log("Result");
     return NextResponse.json({
