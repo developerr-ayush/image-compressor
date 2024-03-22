@@ -57,6 +57,7 @@ export async function POST(req: NextRequest) {
       Body: compressedImage,
     };
     const uploadResult = await s3Client.send(new PutObjectCommand(params));
+    console.log(uploadResult);
     const updatedPathString = `https://${params.Bucket}.s3.${credentials.region}.amazonaws.com/${params.Key}`;
     console.log(uploadResult);
     return NextResponse.json({
@@ -64,6 +65,7 @@ export async function POST(req: NextRequest) {
       time: Date.now(),
       url: updatedPathString,
       data: {
+        uploadResult: uploadResult,
         message: ["File uploaded successfully"],
         baseurl: "",
         files: [updatedPathString],
