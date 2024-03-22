@@ -8,7 +8,7 @@ const credentials = {
   secretAccessKey: process.env.AWS_SECRET_ACCESS_KEY,
 };
 
-const s3Client = new S3Client(credentials);
+const client = new S3Client(credentials);
 export async function POST(req: NextRequest) {
   const data = await req.formData();
   const file: File | null = data.get("image") as unknown as File;
@@ -55,7 +55,7 @@ export async function POST(req: NextRequest) {
       Key: "compress/" + path,
       Body: compressedImage,
     };
-    const uploadResult = await s3Client.send(new PutObjectCommand(params));
+    const uploadResult = await client.send(new PutObjectCommand(params));
     console.log(uploadResult);
     const updatedPathString = `https://${params.Bucket}.s3.${credentials.region}.amazonaws.com/${params.Key}`;
     console.log(uploadResult);
