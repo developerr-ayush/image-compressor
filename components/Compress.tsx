@@ -2,35 +2,7 @@
 import Image from 'next/image';
 import React, { useCallback, useState } from 'react'
 import { useDropzone } from 'react-dropzone'
-import styled from 'styled-components';
-const getColor = (props: any) => {
-    if (props.isDragAccept) {
-        return '#00e676';
-    }
-    if (props.isDragReject) {
-        return '#ff1744';
-    }
-    if (props.isFocused) {
-        return '#2196f3';
-    }
-    return '#eeeeee';
-}
-
-const Container = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding: 20px;
-  border-width: 2px;
-  border-radius: 2px;
-  border-color: ${props => getColor(props)};
-  border-style: dashed;
-  background-color: transparent;
-  color: #bdbdbd;
-  outline: none;
-  transition: border .24s ease-in-out;
-  width:100%;
-`;
+import { FaArrowRight, FaInfo, FaRegTrashAlt } from "react-icons/fa";
 interface filetypes {
     success: boolean
     time: Date,
@@ -84,38 +56,37 @@ export const Compress = () => {
     }
     const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
     return (
-        <div className='text-center w-[30rem] max-full'>
-            <div className="mb-3">
-
-                <h2>Welcome to Image Compressor</h2>
-                <p>Created by ayush</p>
-            </div>
-            <div className="container">
-                <Container {...getRootProps()} >
+        <div className='text-center '>
+            <div >
+                <div className={`border-2 rounded-lg border-dashed h-[40vh] grid place-items-center ${isDragActive ? "border-blue-700" : ""}`} {...getRootProps()} >
                     <input {...getInputProps()} />
                     {
                         isDragActive ?
                             <p>Drop the files here ...</p> :
-                            <p>Drag and drop some files here, or click to select files</p>
+                            <p>Drag and drop some Images here , or click to select files</p>
                     }
-                </Container>
-                <button className='bg-blue-700 px-3 py-1 mt-6' onClick={compressImages}> Compress All Images</button>
-                <div className='grid grid-cols-3 gap-3 mt-6'>
-                    {images.map((file, index) => (
-                        <div key={index} className='relative gradient-chess h-[100px]'>
-                            <Image src={URL.createObjectURL(file)} alt={`Preview ${file.name}`} width={300} height={300} className='object-cover h-[100px]' />
-                            <button onClick={() => handleDeleteImage(index)} className='absolute bottom-0 right-0 bg-red-600 px-2 py-1'>Delete</button>
-                        </div>
-                    ))}
-                    {compressedImages &&
-                        compressedImages.map((file, index) => (
-                            <div key={index} className='relative gradient-chess h-[100px]'>
-                                <Image src={file.url} alt={`Preview ${file.url}`} width={300} height={300} className='object-cover h-[100px]' />
-                                <a href={file.url} download={file.url.split("_ayush_")[1]} className='absolute bottom-0 right-0 bg-green-600 px-2 py-1 inline-block'>Download Image</a>
-                            </div>
-                        ))
+                </div>
+                <button className='bg-blue-700 px-3 py-3 rounded-[50vmax] gap-2 text-md mt-6 flex justify-center items-center w-full ' onClick={compressImages}> Compress Now <FaArrowRight /></button>
+                <div className="border-2 p-4 rounded-2xl mt-4 border-dotted">
 
-                    }
+                    <div className='grid grid-cols-2 gap-3 '>
+                        {images.map((file, index) => (
+                            <div key={index} className='relative gradient-chess h-[300px] rounded-xl'>
+                                <Image src={URL.createObjectURL(file)} alt={`Preview ${file.name}`} width={300} height={300} className='object-cover h-[300px]' />
+                                <button className='absolute bottom-0 left-0 bg-green-600 p-4'><FaInfo size={30} /></button>
+                                <button onClick={() => handleDeleteImage(index)} className='absolute bottom-0 right-0 bg-red-600 p-4'><FaRegTrashAlt size={30} /></button>
+                            </div>
+                        ))}
+                        {compressedImages &&
+                            compressedImages.map((file, index) => (
+                                <div key={index} className='relative gradient-chess h-[100px]'>
+                                    <Image src={file.url} alt={`Preview ${file.url}`} width={300} height={300} className='object-cover h-[100px]' />
+                                    <a href={file.url} download={file.url.split("_ayush_")[1]} className='absolute bottom-0 right-0 bg-green-600 px-2 py-1 inline-block'>Download Image</a>
+                                </div>
+                            ))
+
+                        }
+                    </div>
                 </div>
             </div>
         </div>

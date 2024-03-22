@@ -1,12 +1,12 @@
-import { Compress } from "@/components/Compress";
 import { Header } from "@/components/Header";
+import Hero from "@/components/Hero";
 
 
 export default function Home() {
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center p-24">
+    <main className=" min-h-screen ">
       <Header />
-      <Compress />
+      <Hero />
     </main>
   );
 }
