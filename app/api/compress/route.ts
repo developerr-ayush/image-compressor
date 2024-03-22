@@ -25,7 +25,7 @@ export async function POST(req: NextRequest) {
   const buffer = Buffer.from(byte);
   let quality = 50;
   const path = "compressed_" + file.name;
-  console.log(path, data);
+  console.log("path: ", path);
   const format = file.type.split("/")[1];
   let compressedImage;
   switch (format) {
@@ -55,10 +55,12 @@ export async function POST(req: NextRequest) {
       Key: "compress/" + path,
       Body: compressedImage,
     };
+    console.log("Pasrams");
     const uploadResult = await client.send(new PutObjectCommand(params));
     console.log(uploadResult);
     const updatedPathString = `https://${params.Bucket}.s3.${credentials.region}.amazonaws.com/${params.Key}`;
     console.log(uploadResult);
+    console.log("Result");
     return NextResponse.json({
       success: true,
       time: Date.now(),
