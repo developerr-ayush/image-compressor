@@ -66,7 +66,11 @@ export const Compress = () => {
                     body: formData,
                     cache: 'no-cache',
                 })
-                return res.json();
+                let data = await res.json();
+                if (data.success) {
+                    return data
+                }
+                throw new Error(data.message)
             })
             Promise.all(promises).then((compressedImages) => {
                 setCompressedImages(compressedImages);
