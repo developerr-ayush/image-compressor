@@ -56,6 +56,7 @@ export async function POST(req: NextRequest) {
       Body: compressedImage,
     };
     console.log("Pasrams");
+    console.log(compressedImage);
     const uploadResult = await client.send(new PutObjectCommand(params));
     console.log(uploadResult);
     const updatedPathString = `https://${params.Bucket}.s3.${credentials.region}.amazonaws.com/${params.Key}`;
