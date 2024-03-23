@@ -65,7 +65,6 @@ export async function POST(req: NextRequest) {
       };
       const uploadResult = await client.send(new PutObjectCommand(params));
       const updatedPathString = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
-      console.log(uploadResult);
       compressedImages.push({
         success: true,
         time: Date.now(),

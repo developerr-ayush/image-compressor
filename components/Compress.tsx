@@ -9,6 +9,7 @@ interface filetypes {
     success: boolean
     time: Date,
     url: string,
+    zip: string,
     initialData: {
         name: string,
         size: number,
@@ -27,6 +28,7 @@ export const Compress = () => {
     const [images, setImages] = useState<[] | File[]>([]);
     const [compressedImages, setCompressedImages] = useState<[] | filetypes[]>([]);
     const [pending, setPending] = useState(false);
+    const [zip, setZip] = useState("")
     const onDrop = useCallback((acceptedFiles: File[]) => {
         // Do something with the files
         setImages(prevImages => [...prevImages, ...acceptedFiles]);
@@ -36,7 +38,7 @@ export const Compress = () => {
         setImages(prevImages => prevImages.filter((_, i) => i !== index));
     };
     const compressImages = async () => {
-        // setPending(true)
+        setPending(true)
         try {
             const formData = new FormData();
             images.forEach((image, index) => {
@@ -49,15 +51,14 @@ export const Compress = () => {
                 cache: 'no-cache',
             })
             let data = await res.json();
-            console.log(data)
             setCompressedImages(data.data)
+            setZip(data.zip)
             if (data.success) {
                 return data
             }
             setPending(false)
             throw new Error(data.message)
         } catch (error) {
-            console.log(error)
             setPending(false)
             return error
         }
@@ -109,7 +110,9 @@ export const Compress = () => {
                             ).toFixed(2)
 
                         }% smaller</p>
-                        <button onClick={() => setCompressedImages([])} className='bg-red-700 px-3 py-3 rounded-xl gap-2 text-md mt-6 flex justify-center items-center w-full'><FaRegTrashAlt /> Clear Compressed Images</button>
+                        <div className="flex gap-2">
+                            <a href={zip} className='bg-blue-700 p-2 rounded-md gap-2 text-md mt-6 flex justify-center items-center w-full' download><BsDownload /> Download Zip</a>
+                        </div>
                     </div>
                 </div>}
                 {!!images.length || !!compressedImages.length ? (<div className=" rounded-2xl mt-4 border-dotted">
