@@ -13,6 +13,7 @@ const client = new S3Client({
   credentials: credentials,
 });
 export async function POST(req: NextRequest) {
+  const zip = JSZip();
   const data = await req.formData();
 
   if (!data.get("image[0]")) {
@@ -23,12 +24,13 @@ export async function POST(req: NextRequest) {
     });
   }
   let totalImages = parseInt(data.get("totalImages") as string);
-  let compressedFiles = [];
+  let compressedImages = [];
+
   for (let i = 0; i < totalImages; i++) {
     const file = data.get(`image[${i}]`) as File;
     const byte = await file.arrayBuffer();
     const buffer = Buffer.from(byte);
-    let quality = 50;
+    let quality = 70;
     const path = "compressed_" + file.name;
     const format = file.type.split("/")[1];
     let compressedImage;
@@ -36,34 +38,72 @@ export async function POST(req: NextRequest) {
       case "jpeg":
         compressedImage = await sharp(buffer)
           .jpeg({ quality: quality })
-          .toFile("/");
+          .toBuffer();
         break;
       case "png":
         // No direct quality adjustment in PNG, rely on compression level
         compressedImage = await sharp(buffer)
           .png({ quality: quality })
-          .toFile("/"); // Adjust compression (1-9) based on quality
+          .toBuffer(); // Adjust compression (1-9) based on quality
         break;
       case "gif":
-        compressedImage = await sharp(buffer).gif().toFile("/");
+        compressedImage = await sharp(buffer).gif().toBuffer();
         break;
       case "webp":
-        compressedImage = await sharp(buffer).webp().toFile("/");
+        compressedImage = await sharp(buffer).webp().toBuffer();
         break;
       default:
-        compressedImage = await sharp(buffer).toFile("/");
+        compressedImage = await sharp(buffer).toBuffer();
     }
-    console.log("compressedImage", compressedImage);
-    compressedFiles.push(compressedImage);
+    const fileSize = compressedImage.length;
+    zip.file(path, compressedImage);
+    try {
+      const params = {
+        Bucket: process.env.AWS_BUCKET_NAME || "ayva-hub", // Replace with your bucket name
+        Key: "compress/" + path,
+        Body: compressedImage,
+      };
+      const uploadResult = await client.send(new PutObjectCommand(params));
+      const updatedPathString = `https://${params.Bucket}.s3.ap-south-1.amazonaws.com/${params.Key}`;
+      console.log(uploadResult);
+      compressedImages.push({
+        success: true,
+        time: Date.now(),
+        url: updatedPathString,
+        initialData: {
+          name: file.name,
+          size: file.size,
+        },
+        compressedData: {
+          name: path,
+          size: fileSize,
+        },
+      });
+    } catch (error) {
+      console.error("Error uploading file to S3:", error);
+      compressedImages.push({
+        success: false,
+        message: "Failed to upload file to S3",
+        code: 500,
+      });
+    }
   }
+  // handling zip
+  const zipped = await zip.generateAsync({ type: "nodebuffer" });
+  const zipName = `compressed_images${Date.now()}.zip`;
+  const zipPath = join(process.cwd(), zipName);
 
-  //  compress files to zip
-  console.log("compressedFiles", compressedFiles);
-  const zip = new JSZip();
-  console.log(zip);
+  const zipParams = {
+    Bucket: process.env.AWS_BUCKET_NAME || "ayva-hub", // Replace with your bucket name
+    Key: "compress/zip/" + zipName,
+    Body: zipped,
+  };
+  const uploadZip = await client.send(new PutObjectCommand(zipParams));
+  const updatedZipPath = `https://${zipParams.Bucket}.s3.ap-south-1.amazonaws.com/${zipParams.Key}`;
   return NextResponse.json({
     success: true,
     message: "Images compressed successfully",
-    data: compressedFiles,
+    zip: updatedZipPath,
+    data: compressedImages,
   });
 }
