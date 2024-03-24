@@ -83,7 +83,7 @@ export const Compress = () => {
                             <p>Drop the files here ...</p> :
                             <div>
                                 <p>
-                                    Click to upload or Drop giles here
+                                    Click to upload or Drop Files here
                                 </p>
                                 <p className='opacity-70'>PNG, JPG, WEBP, or GIF</p>
                             </div>
@@ -134,7 +134,7 @@ export const Compress = () => {
                             compressedImages.map((file, index) => (
                                 <div key={index} className=' bg-slate-800 relative flex   w-full rounded-xl flex-shrink-0 min-[100px] flex-grow '>
                                     <Image src={file.url} alt={`Preview ${file.compressedData.name}`} width={100} height={100} className='object-cover aspect-video w-[100px] rounded-lg ' />
-                                    <div className="content flex justify-between items-center w-full ">
+                                    <div className="content flex justify-between items-center w-full truncate">
                                         <div className="text-left p-3 left truncate">
                                             <p className='text-[0.8rem] truncate mb-1' title={file.initialData.name}>{file.initialData.name}</p>
                                             <p className=''>
