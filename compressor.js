@@ -10,7 +10,7 @@ const outputFolder = path.join(__dirname, "compressed"); // Folder to save compr
 async function compressImage(inputPath, outputPath, quality) {
   try {
     await sharp(inputPath)
-      .jpeg({ quality: quality }) // Compress to JPEG with the specified quality
+      .png({ quality: quality }) // Compress to JPEG with the specified quality
       .toFile(outputPath);
     console.log(`Compressed and saved to: ${outputPath}`);
   } catch (err) {
